@@ -9,7 +9,13 @@ import 'package:freelance_app/utils/clr.dart';
 import 'package:freelance_app/widgets/event_tile.dart';
 
 class Events extends StatefulWidget {
-  const Events({super.key});
+  final String collectionName;
+  final String profileID;
+  const Events({
+    super.key,
+    required this.collectionName,
+    required this.profileID,
+  });
 
   @override
   State<Events> createState() => _EventsState();
@@ -38,6 +44,8 @@ class _EventsState extends State<Events> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.collectionName);
+    print(widget.profileID);
     return Expanded(
         child: Column(
       children: [

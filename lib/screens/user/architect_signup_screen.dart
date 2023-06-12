@@ -557,7 +557,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         imageUrl = await ref.getDownloadURL();
         FirebaseFirestore.instance.collection('architects').doc(uID).set(
           {
-            'id': uID,
+            'ID': uID,
             'PhotoUrl': imageUrl,
             'Name': _nameController.text,
             'Email': _emailController.text,
@@ -570,7 +570,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         );
         FirebaseFirestore.instance.collection('roles').doc(uID).set(
           {
-            'id': uID,
+            'ID': uID,
             'Role': 'architect',
             'Email': _emailController.text,
             'CreatedAt': Timestamp.now(),

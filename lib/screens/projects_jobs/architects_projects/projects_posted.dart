@@ -45,8 +45,6 @@ class _postedState extends State<posted> {
       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance.collection('projects').snapshots(),
         builder: (context, AsyncSnapshot snapshot) {
-          print(snapshot);
-          print('hello');
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.connectionState == ConnectionState.active) {
@@ -61,7 +59,7 @@ class _postedState extends State<posted> {
                 child: ListView.builder(
                     itemCount: snapshot.data?.docs.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Project(
+                      return ProjectCards(
                         projectID: snapshot.data.docs[index]['ID'],
                         authorName: snapshot.data.docs[index]['Author'],
                         projectImage: snapshot.data.docs[index]
@@ -75,7 +73,6 @@ class _postedState extends State<posted> {
             } else {
               return Padding(
                 padding: const EdgeInsets.all(layout.padding),
-                
 
                 // padding: const EdgeInsets.all(layout.padding * 6),
                 child: Center(

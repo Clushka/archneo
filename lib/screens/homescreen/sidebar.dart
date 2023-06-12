@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:freelance_app/screens/activity/activity.dart';
-import 'package:freelance_app/screens/search/projects_card.dart';
-import 'package:freelance_app/screens/search/project_activity.dart';
+import 'package:freelance_app/screens/homescreen/sidebar_projects.dart';
+// import 'package:freelance_app/screens/activity/activity.dart';
+// import 'package:freelance_app/screens/projects_jobs/architects_projects/projects_card.dart';
+import 'package:freelance_app/screens/projects_jobs/architects_projects/projects.dart';
 import 'package:freelance_app/utils/colors.dart';
-import '../search/Projects_posted.dart';
+// import '../projects_jobs/architects_projects/projects_posted.dart';
 import '../../config/user_state.dart';
 
 class AboutUS extends StatelessWidget {
@@ -85,8 +86,8 @@ class SideBar extends StatelessWidget {
               ),
               ListTile(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const Projects()));
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) => const ProjPost()));
                 },
                 leading: const Icon(
                   Icons.history,

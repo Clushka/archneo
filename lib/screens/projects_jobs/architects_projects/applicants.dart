@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freelance_app/screens/activity/applicant-card.dart';
-import '../../utils/global_variables.dart';
-import '../search/projects_card.dart';
+import '../../../utils/global_variables.dart';
+import 'projects_card.dart';
 import 'package:freelance_app/utils/layout.dart';
 import 'package:freelance_app/utils/txt.dart';
 import 'package:freelance_app/utils/clr.dart';
@@ -18,6 +18,7 @@ class ApplicantsApp extends StatefulWidget {
 }
 
 class _ApplicantsAppState extends State<ApplicantsApp> {
+  bool _isLoading = true;
   final _auth = FirebaseAuth.instance;
   String? nameForposted;
   String? userImageForPosted;
@@ -50,6 +51,7 @@ class _ApplicantsAppState extends State<ApplicantsApp> {
       projectName = userDoc.get('Name');
       projectDescription = userDoc.get('Description');
       projectImageUrl = userDoc.get('ProjectImageUrl');
+      _isLoading = false;
     });
   }
 
@@ -74,40 +76,45 @@ class _ApplicantsAppState extends State<ApplicantsApp> {
         ),
       ),
       body: Container(
-        child: SingleChildScrollView(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SizedBox(
-              // height: 30,
-              //width: 180,
-              child: Text(
-                projectName!,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        // height: 30,
+                        //width: 180,
+                        child: Text(
+                          projectName!,
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 300,
+                        //width: 180,
+                        child: Image(
+                            image: NetworkImage(projectImageUrl!),
+                            fit: BoxFit.fill),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 300,
+                        //width: 180,
+                        child: Text(
+                          projectDescription!,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ]),
               ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 300,
-              //width: 180,
-              child: Image(
-                  image: NetworkImage(projectImageUrl!), fit: BoxFit.fill),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 300,
-              //width: 180,
-              child: Text(
-                projectDescription!,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ]),
-        ),
       ),
     );
   }

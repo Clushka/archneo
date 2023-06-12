@@ -463,7 +463,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen>
         );
         FirebaseFirestore.instance.collection('roles').doc(uID).set(
           {
-            'id': uID,
+            'ID': uID,
             'Role': 'client',
             'Email': _emailController.text,
             'CreatedAt': Timestamp.now(),

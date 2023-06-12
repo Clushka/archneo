@@ -37,7 +37,7 @@ class ChooseRoleScreen extends StatelessWidget {
               const SizedBox(height: 20),
               CustomButton(
                 buttonText: "Client",
-                buttonColor: Colors.black,
+                buttonColor:  Color.fromARGB(255, 14, 14, 54),
                 textColor: Colors.white,
                 onPressed: () {
                   Navigator.push(

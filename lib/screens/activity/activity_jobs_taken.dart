@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../search/projects_card.dart';
+import '../projects_jobs/architects_projects/projects_card.dart';
 
 class taken extends StatefulWidget {
   const taken({super.key});

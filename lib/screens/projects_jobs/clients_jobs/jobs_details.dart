@@ -10,24 +10,27 @@ import 'package:freelance_app/widgets/comments_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
-class EventDetailsScreen extends StatefulWidget {
-  const EventDetailsScreen({super.key, required this.id, required this.eventID});
+class JobsPosted extends StatefulWidget {
+  const JobsPosted(
+      {super.key,
+      required this.id,
+      required this.jobID,
+      required String userID});
   final String id;
-  final String eventID;
+  final String jobID;
 
   @override
-  _EventDetailsScreenState createState() => _EventDetailsScreenState();
+  _JobsPostedState createState() => _JobsPostedState();
 }
 
-class _EventDetailsScreenState extends State<EventDetailsScreen> {
+class _JobsPostedState extends State<JobsPosted> {
   final TextEditingController _commentController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isCommenting = false;
   String? authorName;
   String? userImageUrl;
-  String? eventSubjects;
-  String? eventDescription;
-  String? eventTitle;
+  String? jobDescription;
+  String? jobTitle;
   bool? recruiting;
   Timestamp? postedDateTimeStamp;
   Timestamp? deadlineDateTimeStamp;
@@ -50,7 +53,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       scheme: 'mailto',
       path: emailCompany,
       query:
-          'subject=Applying for $eventTitle&body=Hello, please attach Resume CV file',
+          'subject=Applying for $jobTitle&body=Hello, please attach Resume CV file',
     );
     final url = params; //removed toString
     launchUrl(url);
@@ -60,25 +63,25 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   void addNewApplicant() async {
     final _generatedId = const Uuid().v4();
     await FirebaseFirestore.instance
-        .collection('events')
-        .doc(widget.eventID)
+        .collection('jobPosted')
+        .doc(widget.jobID)
         .update({
-          'ApplicantsList': FieldValue.arrayUnion([
-            {
-              'ID': FirebaseAuth.instance.currentUser!.uid,
-              'ApplicantsId': widget.eventID,
-              'Name': authorName,
-              'PhotoUrl': user_image,
-              //'commentBody': _commentController.text,
-              'timeapplied': Timestamp.now(),
-            }
+      'applicantsList': FieldValue.arrayUnion([
+        {
+          'ID': FirebaseAuth.instance.currentUser!.uid,
+          'applicantsId': widget.jobID,
+          'name': authorName,
+          'user_image': user_image,
+          //'commentBody': _commentController.text,
+          'timeapplied': Timestamp.now(),
+        }
       ]),
     });
     var docRef =
-        FirebaseFirestore.instance.collection('events').doc(widget.eventID);
+        FirebaseFirestore.instance.collection('jobPosted').doc(widget.jobID);
 
     docRef.update({
-      "Applicants": applicants + 1,
+      "applicants": applicants + 1,
     });
 
     Navigator.pop(context);
@@ -98,25 +101,40 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         userImageUrl = userDoc.get('PhotoUrl');
       });
     }
-    final DocumentSnapshot eventDatabase = await FirebaseFirestore.instance
-        .collection('events')
-        .doc(widget.eventID)
+    final DocumentSnapshot jobsDatabase = await FirebaseFirestore.instance
+        .collection('jobPosted')
+        .doc(widget.jobID)
         .get();
-    if (eventDatabase == null) {
+    if (jobsDatabase == null) {
       return;
     } else {
       setState(() {
-        eventTitle = eventDatabase.get('Title');
-        eventDescription = eventDatabase.get('Description');
-        recruiting = eventDatabase.get('Recruiting');
-        emailCompany = eventDatabase.get('Email');
-        locationCompany = eventDatabase.get('Venue');
-        applicants = eventDatabase.get('Applicants');
-        postedDateTimeStamp = eventDatabase.get('CreatedAt');
-        deadlineDateTimeStamp = eventDatabase.get('DeadlineTimestamp');
-        deadlineDate = eventDatabase.get('DeadlineDate');
+        // 'CreatedAt': Timestamp.now(),
+        // 'ID': jobsID,
+        // 'applicants': 1,
+        // 'applicantsList': 0,
+        // 'category': _jobsSubjectController.text,
+        // 'comments': [],
+        // 'deadlinedate': _jobsDeadlineController.text,
+        // 'deadlinetimestamp': deadlineDateTimeStamp,
+        // 'desc': _jobsDescController.text,+
+        // 'email': user.email,+
+        // 'job_ID': jobsID,
+        // 'recruiting': true,+
+        // 'title': _jobsTitleController.text,+
+        // 'user_image': imageUrl
+
+        jobTitle = jobsDatabase.get('title');
+        jobDescription = jobsDatabase.get('desc');
+        recruiting = jobsDatabase.get('recruiting');
+        emailCompany = jobsDatabase.get('email');
+        locationCompany = jobsDatabase.get('address');
+        applicants = jobsDatabase.get('applicants');
+        postedDateTimeStamp = jobsDatabase.get('CreatedAt');
+        deadlineDateTimeStamp = jobsDatabase.get('deadline_timestamp');
+        deadlineDate = jobsDatabase.get('deadline_date');
         var postDate = postedDateTimeStamp!.toDate();
-        postedDate = '${postDate.year}-${postDate.month}-${postDate.day}';
+        postedDate = '${postDate.day}-${postDate.month}-${postDate.year}';
       });
 
       var date = deadlineDateTimeStamp!.toDate();
@@ -137,7 +155,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   MaterialPageRoute(builder: (context) => const HomeScreen()));
             }),
         title: const Text(
-          "Event Details",
+          "Job Details",
           style: TextStyle(
             fontSize: 20,
             color: Colors.black,
@@ -161,7 +179,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       Padding(
                         padding: const EdgeInsets.only(left: 4),
                         child: Text(
-                          eventTitle == null ? '' : eventTitle!,
+                          jobTitle == null ? '' : jobTitle!,
                           maxLines: 3,
                           style: const TextStyle(
                               color: Colors.black,
@@ -176,14 +194,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
-                            height: 60,
-                            width: 60,
+                            height: 80,
+                            width: 80,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                width: 3,
+                                width: 2,
                                 color: Colors.black,
                               ),
-                              shape: BoxShape.rectangle,
+                              shape: BoxShape.circle,
                               image: DecorationImage(
                                   image: NetworkImage(
                                     userImageUrl == null
@@ -202,7 +220,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   authorName == null ? '' : authorName!,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 20,
                                       color: Colors.black),
                                 ),
                                 const SizedBox(
@@ -217,146 +235,35 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           ),
                         ],
                       ),
-                      dividerWidget(),
+                      const SizedBox(
+                        height: 50,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            applicants.toString(),
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
                           const SizedBox(
                             width: 6,
                           ),
                           const Text(
-                            'Applicants',
+                            'Actively recruiting',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.green,
+                              fontSize: 15,
                             ),
                           ),
                           const SizedBox(
                             width: 10,
                           ),
-                          const Icon(
-                            Icons.how_to_reg_sharp,
-                            color: Colors.grey,
-                          ),
                         ],
                       ),
-                      FirebaseAuth.instance.currentUser!.uid != widget.id
-                          ? Container()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                dividerWidget(),
-                                const Text(
-                                  'Recruitment:',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        User? user = _auth.currentUser;
-                                        final _uid = user!.uid;
-                                        if (_uid == widget.id) {
-                                          try {
-                                            FirebaseFirestore.instance
-                                                .collection('events')
-                                                .doc(widget.eventID)
-                                                .update({'Recruitment': true});
-                                          } catch (err) {
-                                            GlobalMethodTwo.showErrorDialog(
-                                                error:
-                                                    'Action cant be performed',
-                                                ctx: context);
-                                          }
-                                        } else {
-                                          GlobalMethodTwo.showErrorDialog(
-                                              error:
-                                                  'You cant perform this action',
-                                              ctx: context);
-                                        }
-                                        getJobData();
-                                      },
-                                      child: const Text(
-                                        'ON',
-                                        style: TextStyle(
-                                            fontStyle: FontStyle.italic,
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                    ),
-                                    Opacity(
-                                      opacity: recruiting == true ? 1 : 0,
-                                      child: const Icon(
-                                        Icons.check_box,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 40,
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        User? user = _auth.currentUser;
-                                        final _uid = user!.uid;
-                                        if (_uid == widget.id) {
-                                          try {
-                                            FirebaseFirestore.instance
-                                                .collection('events')
-                                                .doc(widget.eventID)
-                                                .update({'Recruitment': false});
-                                          } catch (err) {
-                                            GlobalMethodTwo.showErrorDialog(
-                                                error:
-                                                    'Action cant be performed',
-                                                ctx: context);
-                                          }
-                                        } else {
-                                          GlobalMethodTwo.showErrorDialog(
-                                              error:
-                                                  'You cant perform this action',
-                                              ctx: context);
-                                        }
-                                        getJobData();
-                                      },
-                                      child: const Text(
-                                        'OFF',
-                                        style: TextStyle(
-                                            fontStyle: FontStyle.italic,
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                    ),
-                                    Opacity(
-                                      opacity: recruiting == false ? 1 : 0,
-                                      child: const Icon(
-                                        Icons.check_box,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
                       dividerWidget(),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       const Text(
-                        'Event Description:',
+                        'Job Description:',
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 14,
                             color: Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
@@ -364,7 +271,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         height: 10,
                       ),
                       Text(
-                        eventDescription == null ? '' : eventDescription!,
+                        jobDescription == null ? '' : jobDescription!,
                         textAlign: TextAlign.justify,
                         style: const TextStyle(
                           fontSize: 14,
@@ -380,7 +287,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: Card(
-                color: Colors.orange[200],
+                color: Color.fromARGB(255, 242, 242, 242),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -410,10 +317,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           onPressed: () {
                             applyForJob();
                           },
-                          color: Colors.black,
+                          color: const Color(0xffD2A244),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(13)),
+                              borderRadius: BorderRadius.circular(30)),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 14),
                             child: Text(
@@ -471,7 +378,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: Card(
-                color: Colors.orange[200],
+                color: Color.fromARGB(255, 242, 242, 242),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -530,10 +437,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                                 final _generatedId =
                                                     const Uuid().v4();
                                                 await FirebaseFirestore.instance
-                                                    .collection('events')
-                                                    .doc(widget.eventID)
+                                                    .collection('jobPosted')
+                                                    .doc(widget.jobID)
                                                     .update({
-                                                  'Comments':
+                                                  'comments':
                                                       FieldValue.arrayUnion([
                                                     {
                                                       'ID': FirebaseAuth
@@ -634,8 +541,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               padding: const EdgeInsets.all(16.0),
                               child: FutureBuilder<DocumentSnapshot>(
                                 future: FirebaseFirestore.instance
-                                    .collection('events')
-                                    .doc(widget.eventID)
+                                    .collection('jobPosted')
+                                    .doc(widget.jobID)
                                     .get(),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
@@ -643,10 +550,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   } else {
-                                    if (snapshot.data!["Comments"] == null) {
+                                    if (snapshot.data!["comments"] == null) {
                                       const Center(
-                                          child:
-                                              Text('No Comment for this event'));
+                                          child: Text(
+                                              'No Comment for this event'));
                                     }
                                   }
                                   return ListView.separated(
@@ -655,18 +562,18 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       itemBuilder: (context, index) {
                                         return CommentWidget(
                                             commentId:
-                                                snapshot.data!['Comments']
+                                                snapshot.data!['comments']
                                                     [index]['CommentId'],
                                             commenterId: snapshot
-                                                .data!['Comments'][index]['ID'],
+                                                .data!['comments'][index]['ID'],
                                             commenterName:
-                                                snapshot.data!['Comments']
+                                                snapshot.data!['comments']
                                                     [index]['Name'],
                                             commentBody:
-                                                snapshot.data!['Comments']
+                                                snapshot.data!['comments']
                                                     [index]['CommentBody'],
                                             commenterImageUrl:
-                                                snapshot.data!['Comments']
+                                                snapshot.data!['comments']
                                                     [index]['PhotoUrl']);
                                       },
                                       separatorBuilder: (context, index) {
@@ -676,7 +583,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                         );
                                       },
                                       itemCount:
-                                          snapshot.data!['Comments'].length);
+                                          snapshot.data!['comments'].length);
                                 },
                               ),
                             ),

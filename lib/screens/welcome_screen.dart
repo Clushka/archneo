@@ -24,12 +24,6 @@ class WelcomeScreen extends StatelessWidget {
                   image: AssetImage("assets/images/logo_archneo.png"),
                   fit: BoxFit.fill),
             ),
-            // const SizedBox(height: 20),
-            Text('ARCHNEO',
-                style: TextStyle(
-                    fontSize: 30.0,
-                    color: Color.fromARGB(255, 14, 14, 54),
-                    fontFamily: 'Impact')),
             const SizedBox(height: 20),
 
             CustomButton(

@@ -41,9 +41,9 @@ class EventDetailsScreen extends StatefulWidget {
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
-  final TextEditingController _commentController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _isCommenting = false;
+  // final TextEditingController _commentController = TextEditingController();
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  // bool _isCommenting = false;
   String? authorName;
   String? userImageUrl;
   String? eventSubjects;

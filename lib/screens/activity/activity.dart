@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:freelance_app/screens/search/Projects_posted.dart';
+import 'package:freelance_app/screens/projects_jobs/architects_projects/projects_posted.dart';
 import 'package:freelance_app/screens/activity/activity_jobs_taken.dart';
 import 'package:freelance_app/screens/activity/conf_posted.dart';
 import 'package:freelance_app/screens/homescreen/sidebar.dart';
 import 'package:freelance_app/utils/colors.dart';
-// import 'Activity_jobs_posted.dart';
-// import 'activity_jobs_taken.dart';
 
 class Activity extends StatefulWidget {
   const Activity({super.key});
@@ -18,7 +16,7 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 1,
       child: Scaffold(
           drawer: SideBar(),
           appBar: AppBar(
@@ -35,7 +33,7 @@ class _ActivityState extends State<Activity> {
               ),
             ),
             bottom: const TabBar(
-              tabs: [Tab(text: 'Upcoming'), Tab(text: 'Took a part')],
+              tabs: [Tab(text: 'Upcoming')],
               labelColor: Colors.black,
               labelStyle: TextStyle(fontSize: 15),
             ),
@@ -72,7 +70,7 @@ class _ActivityState extends State<Activity> {
                   ],
                 ),
               ),
-              Expanded(child: TabBarView(children: [posted2(), taken()])),
+              Expanded(child: TabBarView(children: [posted2()])),
             ],
           )),
     );

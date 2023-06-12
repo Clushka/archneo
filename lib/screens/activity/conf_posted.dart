@@ -5,7 +5,7 @@ import 'package:freelance_app/utils/global_variables.dart';
 
 import 'package:freelance_app/utils/layout.dart';
 import 'package:freelance_app/utils/txt.dart';
-import 'package:freelance_app/utils/clr.dart';
+// import 'package:freelance_app/utils/clr.dart';
 import 'package:freelance_app/widgets/event_tile.dart';
 
 class posted2 extends StatefulWidget {
@@ -18,6 +18,8 @@ class posted2 extends StatefulWidget {
 class _posted2State extends State<posted2> {
   String? eventsCategoryFilter;
 
+  bool _isLoading = true;
+
   void getMyData() async {
     final DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('architects')
@@ -27,6 +29,7 @@ class _posted2State extends State<posted2> {
     setState(() {
       name = userDoc.get('Name');
       user_image = userDoc.get('PhotoUrl');
+      _isLoading = false;
     });
   }
 
@@ -38,45 +41,8 @@ class _posted2State extends State<posted2> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Column(
+    return Column(
       children: [
-        // Expanded(
-        //   flex: 0,
-        //   child: Row(
-        //     children: [
-        //       const SizedBox(
-        //         width: 10,
-        //       ),
-        //       IconButton(
-        //         onPressed: () {
-        //           showJobCategoriesDialog();
-        //         },
-        //         icon: const Icon(
-        //           Icons.filter_list,
-        //           color: clr.primary,
-        //           size: layout.iconMedium,
-        //         ),
-        //       ),
-        //       Text(
-        //         "Filter Events based on your choice",
-        //         style: txt.body2Dark.copyWith(color: Colors.grey),
-        //         //TextStyle(fontSize: 15, color: Colors.grey),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // Container(
-        //   child: eventsCategoryFilter != null
-        //   ? Text(
-        //       eventsCategoryFilter.toString(),
-        //       style: txt.body2Dark,
-        //     )
-        //   : const Text(
-        //       "Recent Events",
-        //       style: txt.body2Dark,
-        //   ),
-        // ),
         Expanded(
           child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
@@ -132,10 +98,8 @@ class _posted2State extends State<posted2> {
           ),
         ),
       ],
-    ));
+    );
   }
 
   //job filtering
-
-  
 }

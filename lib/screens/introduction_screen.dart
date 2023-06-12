@@ -86,11 +86,6 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       'assets/images/logo_archneo.png',
                       height: 170,
                     ),
-                    Text('ARCHNEO',
-                        style: TextStyle(
-                            fontSize: 19.0,
-                            color: Color.fromARGB(255, 14, 14, 54),
-                            fontFamily: 'JosefinSans'))
                   ],
                 ),
               ),

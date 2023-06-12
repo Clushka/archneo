@@ -28,6 +28,13 @@ List<String> projectSubjects = [
   'Reconstruction',
 ];
 
+List<String> jobsSubjects = [
+  'Architecture and Construction',
+  'Interior',
+  'Education and Training',
+  'Reconstruction',
+];
+
 const String appId = "30634a79a6b54d5da04faea54f0a9b1a";
 String? token;
 

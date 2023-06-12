@@ -1,22 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:freelance_app/screens/search/Activity_jobs_posted.dart';
-import 'package:freelance_app/screens/activity/activity_jobs_taken.dart';
 import 'package:freelance_app/screens/homescreen/sidebar.dart';
-import 'package:freelance_app/screens/search/jobs.dart';
+import 'package:freelance_app/screens/projects_jobs/architects_projects/projects_posted.dart';
+import 'package:freelance_app/screens/projects_jobs/clients_jobs/jobs.dart';
 import 'package:freelance_app/utils/colors.dart';
-// import 'Activity_jobs_posted.dart';
-// import 'activity_jobs_taken.dart';
 
-class Projects extends StatefulWidget {
-  const Projects({super.key});
+class ProjPost extends StatefulWidget {
+    final String userID;
+
+  final String collectionName;
+  final String profileID;
+  const ProjPost({super.key, required this.collectionName, required this.profileID, required this.userID});
 
   @override
-  State<Projects> createState() => _ProjectsState();
+  State<ProjPost> createState() => _ProjPostState();
 }
 
-class _ProjectsState extends State<Projects> {
+class _ProjPostState extends State<ProjPost> {
+  User? user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
+      final _uid = user!.uid;
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -28,7 +34,7 @@ class _ProjectsState extends State<Projects> {
               color: Color(0xffD2A244),
             ),
             title: const Padding(
-              padding: EdgeInsets.only(left: 180),
+              padding: EdgeInsets.only(left: 210),
               child: Text(
                 "ArchNEO",
                 style: TextStyle(color: Color(0xffD2A244)),
@@ -74,7 +80,11 @@ class _ProjectsState extends State<Projects> {
               ),
               Expanded(
                   child: TabBarView(children: [
-                posted(),
+                posted(
+          //         userID: _uid,
+          // collectionName: widget.collectionName,
+          // profileID: widget.profileID,
+          ),
                 taken2(),
               ])),
             ],
