@@ -205,7 +205,7 @@ class _taken2State extends State<taken2> {
                     itemBuilder: (BuildContext context, int index) {
                       return ProjectCards(
                         projectID: snapshot.data.docs[index]['ID'],
-                        authorName: snapshot.data.docs[index]['Author'],
+                        // authorName: snapshot.data.docs[index]['Author'],
                         projectImage: snapshot.data.docs[index]
                             ['ProjectImageUrl'],
                         projectTitle: snapshot.data.docs[index]['Name'],

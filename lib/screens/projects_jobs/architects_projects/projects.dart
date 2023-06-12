@@ -1,11 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_app/screens/homescreen/sidebar.dart';
+import 'package:freelance_app/screens/projects_jobs/architects_projects/project_decription.dart';
 import 'package:freelance_app/screens/projects_jobs/architects_projects/projects_posted.dart';
 import 'package:freelance_app/screens/projects_jobs/clients_jobs/jobs.dart';
 import 'package:freelance_app/utils/colors.dart';
 
 class Projects extends StatefulWidget {
-  const Projects({super.key});
+  final String userID;
+  final String collectionName;
+  final String profileID;
+  const Projects(
+      {super.key,
+      required this.userID,
+      required this.collectionName,
+      required this.profileID});
 
   @override
   State<Projects> createState() => _ProjectsState();
@@ -13,6 +23,49 @@ class Projects extends StatefulWidget {
 
 class _ProjectsState extends State<Projects> {
   int _selectedIndex = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user = FirebaseAuth.instance.currentUser;
+
+
+  bool _isLoading = false;
+  String phoneNumber = "";
+  String email = "";
+  String? name;
+  String imageUrl = "";
+  String joinedAt = " ";
+  bool _isSameUser = false;
+
+  void getUserData() async {
+    try {
+      _isLoading = true;
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection(widget.collectionName)
+          .doc(widget.profileID)
+          .get();
+      setState(() {
+        email = userDoc.get('Email');
+        name = userDoc.get('Name');
+        phoneNumber = userDoc.get('Phone');
+        imageUrl = userDoc.get('PhotoUrl');
+        Timestamp joinedAtTimeStamp = userDoc.get('CreatedAt');
+        var joinedDate = joinedAtTimeStamp.toDate();
+        joinedAt = '${joinedDate.year}-${joinedDate.month}-${joinedDate.day}';
+      });
+      User? user = _auth.currentUser;
+      final _uid = user!.uid;
+      setState(() {
+        _isSameUser = _uid == widget.userID;
+      });
+    } finally {
+      _isLoading = false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
 
   _onItemTapped(int index) {
     setState(() {
@@ -24,6 +77,8 @@ class _ProjectsState extends State<Projects> {
 
   @override
   Widget build(BuildContext context) {
+    final _uid = user!.uid;
+    final _email = user!.email;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -87,19 +142,19 @@ class _ProjectsState extends State<Projects> {
             ])),
           ],
         ),
-        floatingActionButton: _selectedIndex == 1
+        floatingActionButton: _selectedIndex == 0
             ? FloatingActionButton(
-                backgroundColor: Color.fromARGB(255, 210, 68, 149),
+                backgroundColor: Color.fromARGB(255, 239, 177, 51),
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (_) => ProjUpload(
-                  //             userID: _uid,
-                  //             uEmail: _email,
-                  //           ) //const LoginScreen(),
-                  //       ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ProjUpload(
+                              userID: _uid,
+                              uEmail: _email,
+                            ) //const LoginScreen(),
+                        ),
+                  );
                 },
                 child: const Icon(
                   Icons.add_rounded,
@@ -107,7 +162,27 @@ class _ProjectsState extends State<Projects> {
                   color: Colors.white,
                 ),
               )
-            : null,
+            : _selectedIndex == 1
+                ? FloatingActionButton(
+                    backgroundColor: Color.fromARGB(255, 210, 68, 149),
+                    onPressed: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (_) => ProjUpload(
+                      //             userID: _uid,
+                      //             uEmail: _email,
+                      //           ) //const LoginScreen(),
+                      //       ),
+                      // );
+                    },
+                    child: const Icon(
+                      Icons.add_rounded,
+                      //size: 40,
+                      color: Colors.white,
+                    ),
+                  )
+                : null,
       ),
     );
   }

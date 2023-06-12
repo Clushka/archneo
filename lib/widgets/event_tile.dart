@@ -153,6 +153,7 @@ class _EventState extends State<Event> {
           } else {
             Navigator.canPop(context) ? Navigator.pop(context) : null;
             Navigator.canPop(context) ? Navigator.pop(context) : null;
+
             GlobalMethod.showErrorDialog(
               context: context,
               icon: Icons.verified_user,

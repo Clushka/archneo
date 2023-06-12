@@ -23,6 +23,7 @@ class _ApplicantsAppState extends State<ApplicantsApp> {
   String? nameForposted;
   String? userImageForPosted;
   String? addressForposted;
+
   void getMyData() async {
     final userDoc = await FirebaseFirestore.instance
         .collection('architects')

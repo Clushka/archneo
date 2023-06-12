@@ -18,6 +18,7 @@ class _postedState extends State<posted> {
   String? nameForposted;
   String? userImageForPosted;
   String? addressForposted;
+  
   void getMyData() async {
     final userDoc = await FirebaseFirestore.instance
         .collection('architects')
@@ -61,7 +62,7 @@ class _postedState extends State<posted> {
                     itemBuilder: (BuildContext context, int index) {
                       return ProjectCards(
                         projectID: snapshot.data.docs[index]['ID'],
-                        authorName: snapshot.data.docs[index]['Author'],
+                        // authorName: snapshot.data.docs[index]['Author'],
                         projectImage: snapshot.data.docs[index]
                             ['ProjectImageUrl'],
                         projectTitle: snapshot.data.docs[index]['Name'],

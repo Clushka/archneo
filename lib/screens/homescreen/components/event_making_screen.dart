@@ -554,6 +554,8 @@ class _UploadState extends State<Upload> {
     } finally {
       setState(() {
         _isLoading = false;
+                            Navigator.canPop(context) ? Navigator.pop(context) : null;
+
       });
     }
   }
@@ -572,31 +574,44 @@ class _UploadState extends State<Upload> {
   final auth = FirebaseAuth.instance;
 
   void getUserData() async {
-    try {
-      _isLoading = true;
-      final DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection(widget.collectionName)
-          .doc(widget.profileID)
-          .get();
-      setState(() {
-        email = userDoc.get('Email');
-        name = userDoc.get('Name');
-        phoneNumber = userDoc.get('Phone');
-        imageUrl = userDoc.get('PhotoUrl');
-        Timestamp joinedAtTimeStamp = userDoc.get('CreatedAt');
-        var joinedDate = joinedAtTimeStamp.toDate();
-        joinedAt = '${joinedDate.year}-${joinedDate.month}-${joinedDate.day}';
-      });
-      User? user = _auth.currentUser;
-      final _uid = user!.uid;
-      setState(() {
-        _isSameUser = _uid == widget.userID;
-        // print(_uid);
-      });
-    } finally {
-      _isLoading = false;
-    }
+    final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('architects')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    setState(() {
+      id = userDoc.get('ID');
+      name = userDoc.get('Name');
+      user_image = userDoc.get('PhotoUrl');
+      venue = userDoc.get('address');
+    });
   }
+
+  // void getUserData() async {
+  //   try {
+  //     _isLoading = true;
+  //     final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+  //         .collection(widget.collectionName)
+  //         .doc(widget.profileID)
+  //         .get();
+  //     setState(() {
+  //       email = userDoc.get('Email');
+  //       name = userDoc.get('Name');
+  //       phoneNumber = userDoc.get('Phone');
+  //       imageUrl = userDoc.get('PhotoUrl');
+  //       Timestamp joinedAtTimeStamp = userDoc.get('CreatedAt');
+  //       var joinedDate = joinedAtTimeStamp.toDate();
+  //       joinedAt = '${joinedDate.year}-${joinedDate.month}-${joinedDate.day}';
+  //     });
+  //     User? user = _auth.currentUser;
+  //     final _uid = user!.uid;
+  //     setState(() {
+  //       _isSameUser = _uid == widget.userID;
+  //       // print(_uid);
+  //     });
+  //   } finally {
+  //     _isLoading = false;
+  //   }
+  // }
 
   
 }
